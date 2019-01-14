@@ -1,0 +1,6 @@
+{
+    "require": {
+        "bitwasp/bech32": "^0.0.1",
+        "phpunit/phpunit": "^7.5"
+    }
+}
