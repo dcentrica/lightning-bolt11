@@ -47,4 +47,4 @@ var_dump($bolt11->getDataPart());
 
 ## Credits
 
-This PHP library is a port of the (bitcoinjs/bolt11)[https://github.com/bitcoinjs/bolt11] JavaScript library, big thanks to the multiple authors.
+Big-ups to all the [Lightning Network](https://lightning.network) developers.
