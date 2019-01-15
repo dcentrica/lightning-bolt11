@@ -2,15 +2,15 @@
 
 Jan 2019: A WORK IN PROGRESS!
 
-A PHP library for encoding payment data suited to (Lightning Network)[https://lightning.network] payments. It ideally suits be used as the source data for
+A PHP library for encoding payment data suited to [Lightning Network](https://lightning.network) payments. It's ideally suited for use supplying source data for
 rendering into a Lightning payment QR code.
 
-The module adheres to a minimal subset of the (BOLT11 standard)[https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md].
+The module adheres to a minimal subset of the [BOLT11 standard](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md).
 
 ## Installation
 
 ```bash
-composer require dcentrica/lightning-bolt11-php
+composer require dcentrica/lightning-bolt11
 ```
 
 ## Usage
@@ -35,6 +35,7 @@ $bolt11 = (new Bolt11())
 
 // Decode, and output suitable for use in a QR code
 echo $bolt11->preImage();
+echo $bolt11->raw();
 
 // Just the Human Readable Parts
 var_dump($bolt11->getHumanPart());
