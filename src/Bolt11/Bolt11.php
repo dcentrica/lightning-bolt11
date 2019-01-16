@@ -7,11 +7,10 @@
 
 namespace Dcentrica\Bolt11\Bolt11;
 
-use BitWasp\Bech32;
-
 /**
  * Takes userland payment data and encodes it to the BOLT-11 standard, suited for
- * display for example in QR codes used in Lightning Network payments.
+ * display for example in QR codes used in Lightning Network Bitcoin and Litecoin
+ * payments.
  * 
  * @see https://github.com/bitcoinjs/bolt11
  * @see https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md
@@ -21,6 +20,12 @@ use BitWasp\Bech32;
  */
 class Bolt11
 {
+    /**
+     * The default encoding separator to use. 1 == Bech32 separator.
+     * 
+     * @var int
+     */
+    const ENCODING_SEPARATOR = 1;
 
     /**
      * An array of default userland options for each field. These can be modified
@@ -36,21 +41,32 @@ class Bolt11
         'txSignature' => null,
         'paymentHash' => null,
         'description' => null,
-        'cltvExpiry' => null,
-        'timestamp' => 0, // <-- TODO is this a tmestamp or an encoded timestamp?
+        'cltvExpiry' => 0,  // <-- TODO is this a de-facto tmestamp or encoded timestamp?
+        'timestamp' => 0,   // <-- TODO is this a de-facto tmestamp or encoded timestamp?
+        'fallback' => null,
     ];
+    
+    /**
+     * @return void
+     */
+    public function __construct()
+    {
+        // TODO is this a de-facto tmestamp or encoded timestamp?
+        $this->opts['timestamp'] = time();
+    }
 
     /**
      * The amount to request payment for.
      * 
      * Note: The spec suggests that payees can legitimately accept up to twice
-     * the amount required for payment.
+     * the amount required for payment, in order to take care of L1 and L2
+     * fees.
      * 
      * @param  float  $amount     Amount to pay in Bitcoin (0.xxx) BTC
      * @param  string $multiplier One of: m|u|n|p (milli|micro|nano|pico)
      * @return Dcentrica\Bolt11
      */
-    public function setAmount(float $amount, string $multiplier): Dcentrica\Bolt11
+    public function setAmount(float $amount, string $multiplier) : Dcentrica\Bolt11
     {
         $this->opts['paymentAmount'] = "{$amount}{$multiplier}";
 
@@ -67,9 +83,9 @@ class Bolt11
      * @param string $network One of: bc|tb|bcrt
      * @return Dcentrica\Bolt11
      */
-    public function setNetwork(string $network): Dcentrica\Bolt11
+    public function setNetwork(string $network) : Dcentrica\Bolt11
     {
-        $this->opts['network'] = "ln{$network}";
+        $this->opts['network'] = strtolower("ln{$network}");
 
         return $this;
     }
@@ -78,7 +94,7 @@ class Bolt11
      * @param  string $nodeKey The public key of the node payment is to be made to.
      * @return Dcentrica\Bolt11
      */
-    public function setPayeeNodeKey(string $nodeKey): Dcentrica\Bolt11
+    public function setPayeeNodeKey(string $nodeKey) : Dcentrica\Bolt11
     {
         $this->opts['payeeNodeKey'] = $nodeKey;
 
@@ -89,7 +105,7 @@ class Bolt11
      * @param  int $flag TODO
      * @return Dcentrica\Bolt11
      */
-    public function setRecoveryFlag(int $flag): Dcentrica\Bolt11
+    public function setRecoveryFlag(int $flag) : Dcentrica\Bolt11
     {
         $this->opts['recoveryFlag'] = $flag;
 
@@ -100,29 +116,33 @@ class Bolt11
      * @param  string $sig TODO
      * @return Dcentrica\Bolt11
      */
-    public function setTxSignature(string $sig): Dcentrica\Bolt11
+    public function setTxSignature(string $sig) : Dcentrica\Bolt11
     {
         $this->opts['txSignature'] = $sig;
 
         return $this;
     }
-
+    
     /**
-     * @param  string $hash TODO
+     * Set the payment hash.
+     * 
+     * @param  string $hash The payment hash generated e.g. by a Lightning node.
      * @return Dcentrica\Bolt11
      */
-    public function setPaymentHash(string $hash): Dcentrica\Bolt11
+    public function setPaymentHash(string $hash) : Dcentrica\Bolt11
     {
         $this->opts['paymentHash'] = $hash;
-
+        
         return $this;
     }
 
     /**
-     * @param  string $description TODO
+     * Set the payment description.
+     * 
+     * @param  string $description
      * @return Dcentrica\Bolt11
      */
-    public function setDescription(string $description): Dcentrica\Bolt11
+    public function setDescription(string $description) : Dcentrica\Bolt11
     {
         $this->opts['description'] = $description;
 
@@ -130,11 +150,13 @@ class Bolt11
     }
 
     /**
+     * Set the cltv_expiry field.
+     * 
      * @todo Should $expiry be an int timestamp or a stringy encoded timestamp?
      * @param  string $expiry TODO
      * @return Dcentrica\Bolt11
      */
-    public function setCltvExpiry(string $expiry): Dcentrica\Bolt11
+    public function setCltvExpiry(string $expiry) : Dcentrica\Bolt11
     {
         $this->opts['cltvExpiry'] = $expiry;
 
@@ -149,41 +171,28 @@ class Bolt11
      * @param  int $timestamp
      * @return Dcentrica\Bolt11
      */
-    public function setTimestamp(int $timestamp): Dcentrica\Bolt11
+    public function setTimestamp(int $timestamp) : Dcentrica\Bolt11
     {
         $this->opts['timestamp'] = $timestamp;
 
         return $this;
     }
-
+    
     /**
-     * @see    $this->getNetwork()
-     * @param  string $paymentReq
+     * Add a fallback L1 Bitcoin network address. This is useful if wallets are
+     * unable to process a Lightning payment, they can extract a bog-standard
+     * Bitcoin address to make payment to instead. This is an optional setter
+     * as we do not want to be opinionated as to what consumer logic wishes to
+     * do with this lib.
+     * 
+     * @param  string $address
      * @return Dcentrica\Bolt11
      */
-    public function setPaymentRequest(string $paymentReq): Dcentrica\Bolt11
+    public function setFallback(string $address) : Dcentrica\Bolt11
     {
-        // See: https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md#the-same-on-testnet-with-a-fallback-address-mk2qpyatskicvfvutaqlbryyccrxmuaghp
-        $network = $this->opts['network'];
-        $amount = "{$this->opts['amount']}m";
-        $bech32sep = 1;
-        $timestamp = null; // TODO
-        $_paymentHash = null;
-        $paymentHash = "p{$_paymentHash}"; // TODO
-        $_taggedField = null; // TODO
-        $taggedField = "h$_taggedField";
-
-        $this->opts['paymentRequest'] = "{$this->getPrefix()}1{$paymentReq}";
-
+        $this->opts['fallback'] = $address;
+        
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPrefix(): string
-    {
-        return "{$this->opts['network']}{$this->opts['amount']}";
     }
 
     /**
@@ -193,7 +202,7 @@ class Bolt11
      * @param  string $invoice
      * @return array           An array of: prefix,amount
      */
-    public function getHumanPart(string $invoice = ''): string
+    public function getHumanPart(string $invoice = '') : string
     {
         $invoice ?: $this->getEncoded();
         $preImage = $invoice->preImage();
@@ -209,7 +218,7 @@ class Bolt11
      * @param  string $invoice
      * @return array           An array of: timestamp,tagged-parts,signature
      */
-    public function getDataPart(string $invoice = ''): string
+    public function getDataPart(string $invoice = '') : string
     {
         $invoice ?: $this->getEncoded();
         $preImage = $invoice->preImage();
@@ -217,36 +226,57 @@ class Bolt11
 
         return $field->value();
     }
+    
+    /**
+     * Return the pre-image as an associative array. This is the raw string that
+     * comprises a Lightning invoice _before_ it is bech32 encoded.
+     * 
+     * @return array
+     */
+    public function getPreimage() : string
+    {
+        return [
+            'prefix' => $this->getPrefix(),
+            'separator' => self::ENCODING_SEPARATOR,
+            'timestamp' => $this->opts['timestamp'],
+            'paymentHash' => "pp5{$this->opts['paymentHash']}", // TODO see spec...
+            'description' => "dp1{$this->opts['description']}", // TODO see spec...
+            'signature' => $this->opts['signature'],
+            'checkdum' => $this->getBech32Checksum()
+        ];
+    }
 
     /**
-     * Return the pre-image. The lengthy-as raw string that comprises a Lightning
-     * invoice before it is bech32 encoded.
+     * Return the pre-image as a string. This is the raw string that comprises a
+     * Lightning invoice _before_ it is bech32 encoded.
      * 
      * e.g., "lightning:lnbc1pvjluezpp5qqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqypqdpl2pkx2ctnv5sxxmmwwd5kgetjypeh2ursdae8g6twvus8g6rfwvs8qun0dfjkxaq8rkx3yf5tcsyz3d73gafnh3cax9rn449d9p5uxz9ezhhypd0elx87sjle52x86fux2ypatgddc6k63n7erqz25le42c4u4ecky03ylcqca784w"
      * 
      * @return string
      */
-    public function getPreimage() : string
+    public function getPreimageAsString() : string
     {
-        return sprintf('%s%s1%d%s%s%s%s',
-            $this->getScheme(),
-            $this->getPrefix(),
-            $this->opts['timestamp'] ?? time(),
-            "pp5{$this->opts['paymentHash']}", // TODO see spec...
-            "dp1{$this->opts['description']}", // TODO see spec...
-            $this->opts['signature'],
-            $this->getBech32Checksum()
-        );
+        return implode('', $this->getPreimage());
     }
     
     /**
-     * Alias of getPreImage().
+     * Alias of getPreimage().
      * 
-     * @return string
+     * @return array
      */
     public function getRaw() : string
     {
         return $this->getPreimage();
+    }
+    
+    /**
+     * Alias of getPreimageAsString().
+     * 
+     * @return string
+     */
+    public function getRawAsString() : string
+    {
+        return $this->getPreimageAsString();
     }
     
     /**
@@ -257,17 +287,6 @@ class Bolt11
     {
         return ''; // TODO
     }
-    
-    /**
-     * @param  string $hash The payment hash generated e.g. by a Lightning node.
-     * @return $this
-     */
-    public function setPaymentHash(string $hash)
-    {
-        $this->opts['paymentHash'] = $hash;
-        
-        return $this;
-    }
 
     /**
      * Generate an encoded Lightning Payment Invoice. Defaults to current bech32
@@ -276,9 +295,12 @@ class Bolt11
      * 
      * @return string
      */
-    public function encode(string $invoice = ''): string
+    public function encode(string $invoice = '') : string
     {
-        return Bech32::encode($this->getHuman(), $this->preImage(1));
+        return sprintf(
+            'lightning:%s',
+            BitWasp\Bech32\encode($this->getHuman(), $this->getPreimage())
+        );
     }
 
     /**
@@ -290,23 +312,25 @@ class Bolt11
      * 
      * @param  string $invoice
      * @return array
+     * @throws Bech32Exception
      */
-    public function decode(string $invoice): string
+    public function decode(string $invoice) : string
     {
-        return Bech32::decode($invoice);
+        return BitWasp\Bech32\decode($invoice);
     }
 
     /**
+     * @todo What is meant by TX is complete in a Lightning context?
      * @return bool
      */
-    public function isTxComplete(): bool
+    public function isTxComplete() : bool
     {
         return false;
     }
 
     /**
      * Return a Field object model that represents the desired Lightning payment
-     * field.
+     * field, otherwise known as a "part" in the Bolt11 spec.
      * 
      * @param  string $field The name of the Lightning field to return.
      * @return Dcentrica\Bolt11\Field\Field
@@ -324,37 +348,28 @@ class Bolt11
     }
     
     /**
+     * Simply returns the prefix part.
+     * 
      * @return string
      */
     public function getPrefix() : string
     {
         return "ln{$this->opts['network']}";  
     }
-    
-    /**
-     * The prefix-prefix if you like.
-     * 
-     * @return string
-     */
-    public function getScheme() : string
-    {
-        return 'lightning:';
-    }
 
     /**
-     * Simple way to return any of the keyed options. Because some options may
-     * legitimately be set to null, we instead return 'noop' to signal when a passed
-     * option was not found.
+     * Return the value of any of the options' configuration set by setters.
+     * Because some options may legitimately be set to null, we instead return 'noop'
+     * to signal when a passed option was not found.
      * 
-     * @param  string $opt This should be the name of a known key in the $opts
-     *                     array.
+     * @param  string $opt This should be the name of a key from the $opts array.
      * @return mixed
      * @throws Exception
      */
     public function __get($opt)
     {   
         if (array_key_exists($opt, $this->opts)) {
-            return $this->opts[$name];
+            return $this->opts[$opt];
         }
 
         return 'noop';
