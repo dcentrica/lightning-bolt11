@@ -1,6 +1,7 @@
 {
     "require": {
-        "bitwasp/bech32": "^0.0.1"
+        "bitwasp/bech32": "^0.0.1",
+        "php-decimal/php-decimal": "^1.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^7"

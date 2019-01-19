@@ -20,6 +20,48 @@ The module adheres to a minimal subset of the [BOLT11 standard](https://github.c
 composer require dcentrica/lightning-bolt11
 ```
 
+## Requirements
+
+PHP's `bcmath` doesn't quite cut the mustard for our arbitrary precision needs. This package instead requires the `php-decimal` PHP extension which itself relies on `libmpdec`.
+
+### Info
+
+* ([mpdecimal lib](http://www.bytereef.org/mpdecimal/)
+* ([php-decimal](http://php-decimal.io/#installation)
+
+Note: If you're running multiple versions of PHP through the [Ondřej Surý](https://launchpad.net/~ondrej/+archive/ubuntu/php) PPA, ensure you're currently using the desired version of PHP and that the same version
+is set for use by `php-config` and `phpize`, e.g.:
+
+```sh
+sudo update-alternatives --set php /usr/bin/php7.2
+sudo update-alternatives --set php-config /usr/bin/php-config7.2
+sudo update-alternatives --set phpize /usr/bin/phpize7.2
+```
+
+The following libs and extensions are required to be installed and built into PHP:
+
+```sh
+#> sudo apt install libmpdec-dev
+```
+
+```sh
+#> sudo pecl install decimal
+```
+
+```sh
+#> sudo phpenmod decimal
+```
+
+```sh
+sudo mv /path/to/php/cli/conf.d/20-decimal.ini /path/to/php/cli/conf.d/30-decimal.ini
+```
+
+Check all is well:
+
+```sh
+#> php --re decimal
+```
+
 ## Usage
 
 ```php

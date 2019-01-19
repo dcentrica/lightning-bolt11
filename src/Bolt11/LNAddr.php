@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+//declare(strict_types=1);
 
 /**
  * @author  Russell Michell for Dcentrica 2019 <russ@theruss.com>
@@ -8,6 +8,8 @@ declare(strict_types=1);
  */
 
 namespace Dcentrica\Bolt11;
+
+use Decimal\Decimal;
 
 /**
  * Takes userland payment data and encodes it to the BOLT-11 standard, suited for
@@ -89,23 +91,26 @@ class LNAddr
      * BOLT #11:
      * 
      * A writer MUST encode $amount as a positive decimal integer with no
-     * leading zeroes, SHOULD use the shortest representation possible.
+     * leading zeroes.
+     * A writer SHOULD use the shortest representation possible.
      * 
-     * @param  int $amount
+     * @param  Decimal $decimal
      * @return string
      */
-    public static function shorten_amount(int $amount) : string
+    public static function shorten_amount(Decimal $decimal) : string
     {
-        // Given an amount in bitcoin, shorten it
-        // Convert to pico initially
-        $amount = pow($amount * 10, 12);
-        $units = ['p', 'n', 'u', 'm'];
+        // Given an amount in bitcoin, shorten it and convert to pico initially
+        $dec = $decimal->mul(10);
+        $amt = $dec->pow(12);
+        $units = ['p', 'n', 'u', 'm', ''];
         
         foreach ($units as $unit) {
-            if (($amount % 1000) === 0) {
-                return sprintf('%d%s', floor($amount / 1000), $unit);
+            if (($amt->mod(1000)->toString()) == 0) {
+                return sprintf('%s%s', ($amt->div(1000)->floor()), $unit);
             }
         }
+        
+        return '';
     }
     
     /**
