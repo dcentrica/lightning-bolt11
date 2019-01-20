@@ -88,7 +88,7 @@ class LNAddr
     }
     
     /**
-     * BOLT #11:
+     * Shorten an amount in Bitcoin.
      * 
      * A writer MUST encode $amount as a positive decimal integer with no
      * leading zeroes.
@@ -97,20 +97,21 @@ class LNAddr
      * @param  Decimal $decimal
      * @return string
      */
-    public static function shorten_amount(Decimal $decimal) : string
+    public static function shorten_amount(Decimal $amount) : string
     {
-        // Given an amount in bitcoin, shorten it and convert to pico initially
-        $dec = $decimal->mul(10);
-        $amt = $dec->pow(12);
+        $amount = $amount->toString();
+        $amount = (int) ($amount * 10 ** 12);
         $units = ['p', 'n', 'u', 'm', ''];
         
         foreach ($units as $unit) {
-            if (($amt->mod(1000)->toString()) == 0) {
-                return sprintf('%s%s', ($amt->div(1000)->floor()), $unit);
+            if (($amount % 1000) == 0) {
+                $amount = floor($amount / 1000);
+            } else {
+                break;
             }
         }
         
-        return '';
+        return $amount . $unit;
     }
     
     /**
@@ -125,10 +126,31 @@ class LNAddr
      * 
      * @param  string "Encoded" $amount
      * @return int
+     * @throws InvalidArgumentException
      */
     public static function unshorten_amount(string $amount) : int
     {
+        $units = [
+            'p' => (10 ** 12),
+            'n' => (10 ** 9),
+            'u' => (10 ** 6),
+            'm' => (10 ** 3),
+        ];
+        $sunits = implode('|', array_keys($units));
+        $unit = $amount[-1];
         
+        // BOLT #11:
+        // A reader SHOULD fail if `amount` contains a non-digit, or is followed by
+        // anything except a `multiplier` in the table above.
+        if (!preg_match("#\d+($sunits)?#", $amount)) {
+            throw new \InvalidArgumentException(sprintf('Invalid amount: %s ', $amount));
+        }
+
+        if (in_array($unit, array_keys($units))) {
+            return (new Decimal(substr($amount, 0, -1)))->toInt() / $units[$unit];
+        } else {
+            return (new Decimal($amount))->toInt();
+        }
     }
     
     /**

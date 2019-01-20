@@ -9,10 +9,9 @@
 
 Jan 2019: A WORK IN PROGRESS!
 
-A PHP library for encoding payment data suited to [Lightning Network](https://lightning.network) payments. It's ideally suited for use supplying source data for
-rendering into a Lightning payment QR code.
+A PHP library for encoding payment data suited to [Lightning Network](https://lightning.network) payments. It's ideally suited for use supplying source data for rendering into a Lightning payment QR code.
 
-The module adheres to a minimal subset of the [BOLT11 standard](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md).
+The library adheres to a minimal subset of the [BOLT11 standard](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md).
 
 ## Installation
 
@@ -26,8 +25,8 @@ PHP's `bcmath` doesn't quite cut the mustard for our arbitrary precision needs. 
 
 ### Info
 
-* ([mpdecimal lib](http://www.bytereef.org/mpdecimal/)
-* ([php-decimal](http://php-decimal.io/#installation)
+* [mpdecimal lib](http://www.bytereef.org/mpdecimal/)
+* [php-decimal](http://php-decimal.io/#installation)
 
 Note: If you're running multiple versions of PHP through the [Ondřej Surý](https://launchpad.net/~ondrej/+archive/ubuntu/php) PPA, ensure you're currently using the desired version of PHP and that the same version
 is set for use by `php-config` and `phpize`, e.g.:
@@ -42,15 +41,8 @@ The following libs and extensions are required to be installed and built into PH
 
 ```sh
 #> sudo apt install libmpdec-dev
-```
-
-```sh
 #> sudo pecl install decimal
-```
-
-```sh
 #> sudo phpenmod decimal
-```
 
 ```sh
 sudo mv /path/to/php/cli/conf.d/20-decimal.ini /path/to/php/cli/conf.d/30-decimal.ini
