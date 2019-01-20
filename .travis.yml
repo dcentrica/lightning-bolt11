@@ -8,7 +8,7 @@ php:
 
 before_script:
   # Init PHP
-  - apt install libmpdec-dev
+  - apt-get install libmpdec-dev
   - pecl install decimal
   - composer self-update || true
   - phpenv rehash
