@@ -9,7 +9,7 @@
 
 Jan 2019: A WORK IN PROGRESS!
 
-A PHP library for encoding payment data suited to [Lightning Network](https://lightning.network) payments. It's ideally suited for use supplying source data for rendering into a Lightning payment QR code.
+This is a PHP fork of the Python3 [rustyrussell/lightning-payencode](https://github.com/rustyrussell/lightning-payencode) library. This is a PHP library for encoding payment data suited to [Lightning Network](https://lightning.network) payments. It's ideally suited for use supplying source data for rendering into a Lightning payment QR code.
 
 The library adheres to a minimal subset of the [BOLT11 standard](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md).
 
@@ -21,11 +21,8 @@ composer require dcentrica/lightning-bolt11
 
 ## Requirements
 
-PHP's `bcmath` doesn't quite cut the mustard for our arbitrary precision needs. This package instead requires the `php-decimal` PHP extension which itself relies on `libmpdec`.
-
-### Info
-
-* [mpdecimal lib](http://www.bytereef.org/mpdecimal/)
+* >= PHP7.1
+* [mpdecimal PHP Extension](http://www.bytereef.org/mpdecimal/)
 * [php-decimal](http://php-decimal.io/#installation)
 
 Note: If you're running multiple versions of PHP through the [Ondřej Surý](https://launchpad.net/~ondrej/+archive/ubuntu/php) PPA, ensure you're currently using the desired version of PHP and that the same version

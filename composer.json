@@ -1,4 +1,9 @@
 {
+    "config": {
+        "platform": {
+	    "php": "^7.1"
+	}
+    },
     "require": {
         "bitwasp/bech32": "^0.0.1",
         "php-decimal/php-decimal": "^1.1"

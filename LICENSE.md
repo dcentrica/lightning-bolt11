@@ -1,6 +1,6 @@
 BSD 3-Clause License
 
-Copyright (c) 2019, Russell Michell/Dcentrica - http://theruss.com/ & http://dcentrica.io 
+Copyright (c) 2019, Russell Michell/Dcentrica - http://theruss.com/, http://dcentrica.io 
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
