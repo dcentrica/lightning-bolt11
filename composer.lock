@@ -4,8 +4,55 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8344348b7b71e46e436d04ed1f57cead",
+    "content-hash": "e9cee5b6eacde45458406cf0a731b895",
     "packages": [
+        {
+            "name": "bitcoin-php/bitcoin-ecdsa",
+            "version": "1.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/BitcoinPHP/BitcoinECDSA.php.git",
+                "reference": "b8859651a40a029a93a174b60abf6d33e6691561"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/BitcoinPHP/BitcoinECDSA.php/zipball/b8859651a40a029a93a174b60abf6d33e6691561",
+                "reference": "b8859651a40a029a93a174b60abf6d33e6691561",
+                "shasum": ""
+            },
+            "require": {
+                "ext-gmp": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.1.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "BitcoinPHP\\BitcoinECDSA": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "unlicense"
+            ],
+            "authors": [
+                {
+                    "name": "BitcoinPHP",
+                    "email": "panda@panda.cat",
+                    "homepage": "http://github.com/BitcoinPHP",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP library allowing to generate BTC addresses from private keys",
+            "homepage": "https://github.com/BitcoinPHP/BitcoinECDSA.php",
+            "keywords": [
+                "ECDSA",
+                "bitcoin"
+            ],
+            "time": "2017-08-09T07:44:40+00:00"
+        },
         {
             "name": "bitwasp/bech32",
             "version": "v0.0.1",
@@ -1553,6 +1600,58 @@
             "time": "2017-04-07T12:08:54+00:00"
         },
         {
+            "name": "tuupola/base58",
+            "version": "0.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tuupola/base58.git",
+                "reference": "6c7e6ba88b4d83c069ae4df8234f19009af33576"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tuupola/base58/zipball/6c7e6ba88b4d83c069ae4df8234f19009af33576",
+                "reference": "6c7e6ba88b4d83c069ae4df8234f19009af33576",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6|^7.0"
+            },
+            "require-dev": {
+                "overtrue/phplint": "^0.2.4",
+                "paragonie/random_compat": "^2.0",
+                "phpbench/phpbench": "^0.13.0",
+                "phpunit/phpunit": "^5.0|^6.0|^7.0",
+                "squizlabs/php_codesniffer": "^2.5"
+            },
+            "suggest": {
+                "ext-gmp": "GMP extension provides the fastest encoding and decoding."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Tuupola\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mika Tuupola",
+                    "email": "tuupola@appelsiini.net",
+                    "homepage": "https://appelsiini.net/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Base58 encoder and decoder for arbitrary data",
+            "homepage": "https://github.com/tuupola/base58",
+            "keywords": [
+                "base58"
+            ],
+            "time": "2019-01-21T11:12:16+00:00"
+        },
+        {
             "name": "webmozart/assert",
             "version": "1.4.0",
             "source": {
@@ -1609,6 +1708,8 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^7.1"
+    },
     "platform-dev": []
 }
