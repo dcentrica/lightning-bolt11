@@ -40,9 +40,11 @@ The following libs and extensions are required to be installed and built into PH
 #> sudo apt install libmpdec-dev
 #> sudo pecl install decimal
 #> sudo phpenmod decimal
+```
+
 
 ```bash
-sudo mv /path/to/php/cli/conf.d/20-decimal.ini /path/to/php/cli/conf.d/30-decimal.ini
+#> sudo mv /path/to/php/cli/conf.d/20-decimal.ini /path/to/php/cli/conf.d/30-decimal.ini
 ```
 
 Check all is well:
