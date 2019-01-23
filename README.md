@@ -9,7 +9,7 @@
 
 Jan 2019: A WORK IN PROGRESS!
 
-This is a PHP fork of the Python3 [rustyrussell/lightning-payencode](https://github.com/rustyrussell/lightning-payencode) library. This is a PHP library for encoding payment data suited to [Lightning Network](https://lightning.network) payments. It's ideally suited for use supplying source data for rendering into a Lightning payment QR code.
+This is a PHP fork of the Python3 [rustyrussell/lightning-payencode](https://github.com/rustyrussell/lightning-payencode) library. A PHP library for encoding payment data suited to [Lightning Network](https://lightning.network) payments as QR codes.
 
 The library adheres to a minimal subset of the [BOLT11 standard](https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md).
 
@@ -21,7 +21,7 @@ composer require dcentrica/lightning-bolt11
 
 ## Requirements
 
-* >= PHP7.1
+* &gt;= PHP7.1
 * [mpdecimal PHP Extension](http://www.bytereef.org/mpdecimal/)
 * [php-decimal](http://php-decimal.io/#installation)
 
@@ -36,18 +36,18 @@ sudo update-alternatives --set phpize /usr/bin/phpize7.2
 
 The following libs and extensions are required to be installed and built into PHP:
 
-```sh
+```bash
 #> sudo apt install libmpdec-dev
 #> sudo pecl install decimal
 #> sudo phpenmod decimal
 
-```sh
+```bash
 sudo mv /path/to/php/cli/conf.d/20-decimal.ini /path/to/php/cli/conf.d/30-decimal.ini
 ```
 
 Check all is well:
 
-```sh
+```bash
 #> php --re decimal
 ```
 
