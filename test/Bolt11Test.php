@@ -29,7 +29,7 @@ class Bolt11Test extends TestCase
     /**
      * @var array
      */
-    protected $fixture;
+    protected $fixture = [];
     
     public function __construct()
     {
@@ -178,7 +178,8 @@ class Bolt11Test extends TestCase
     {
         // "0b010010000000010" is yielded from python3 64bit:
         // >>> import bitstring
-        // >>> print(bitstring.pack("uint:5, uint:5, uint:5", 1, (67 / 5) / 32, (67 / 5) % 32) + l)
+        // >>> print(bitstring.pack("uint:5, uint:5, uint:5", 1, (67 / 5) / 32, (67 / 5) % 32) + '0x00010203040506070809000102030405060708090001020304050607080901020')
+        // <BitStream> 0x081a00020406080a0c0e101200020406080a0c0e101200020406080a0c0e10120204, 0b000
         $this->assertEquals(
             ['0x081a00020406080a0c0e101200020406080a0c0e101200020406080a0c0e10120204', '0b000'],
             LNAddr::tagged('p', '0x00010203040506070809000102030405060708090001020304050607080901020')

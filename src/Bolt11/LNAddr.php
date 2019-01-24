@@ -272,21 +272,25 @@ class LNAddr
      * @param  string $char The delimiting character from a Lightning Payment
      *                      that denotes the "tagged part".
      * @param  array  $l
-     * @return array Binary An array of byte-strings
+     * @return array A 2-value array of byte-strings,
      */
     public static function tagged(string $char, array $l) : array
     {
+        $lSize = sizeof($l);
+        
         // Tagged fields need to be zero-padded to 5 bits.
-        while (sizeof($l) % 5 != 0) {
-            array_push($l, '0b0');
+        foreach ($l as &$v) {
+            if (strlen($v) % 5 != 0) {
+                $v = sprintf('%05d', decbin($v));
+            }
         }
         
-        // TODO (See unit tests) - how to zero-pad to 5 bits??
-        // bitstring.pack("uint:5, uint:5, uint:5", CHARSET.find(char), (l.len / 5) / 32, (l.len / 5) % 32) + l
-        $size = sizeof($l);
+        // More zero-padding
         return [
-            pack('C*', strpos(self::$charset, $char), ($size / 5) / 32, ($size / 5) % 32),
-            $l
+            sprintf('%05d', decbin(strpos(self::$charset, $char)))
+            . sprintf('%05d', decbin(($lSize / 5) / 32))
+            . sprintf('%05d', decbin(($lSize / 5) % 32)),
+            implode('', $l)
         ];
     }
     

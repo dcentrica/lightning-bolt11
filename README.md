@@ -36,20 +36,20 @@ sudo update-alternatives --set phpize /usr/bin/phpize7.2
 
 The following libs and extensions are required to be installed and built into PHP:
 
-```bash
+```sh
 #> sudo apt install libmpdec-dev
 #> sudo pecl install decimal
 #> sudo phpenmod decimal
 ```
 
 
-```bash
+```sh
 #> sudo mv /path/to/php/cli/conf.d/20-decimal.ini /path/to/php/cli/conf.d/30-decimal.ini
 ```
 
 Check all is well:
 
-```bash
+```sh
 #> php --re decimal
 ```
 
